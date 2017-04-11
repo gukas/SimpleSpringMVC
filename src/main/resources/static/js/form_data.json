@@ -1,0 +1,42 @@
+{
+  "forms": [
+    {
+      "formName": "Form 1",
+      "button": {
+        "buttonText": "Submit 1",
+        "postUrl": "http://localhost:8080/post_1"
+      },
+      "fields": [
+        {
+          "fieldName": "Field 1",
+          "defaultValue": null,
+          "jsonFieldName": "field_1"
+        },
+        {
+          "fieldName": "Field 2",
+          "defaultValue": "1231232",
+          "jsonFieldName": "field_2"
+        }
+      ]
+    },
+    {
+      "formName": "Form 2",
+      "button": {
+        "buttonText": "Submit 2",
+        "postUrl": "http://localhost:8080/post_2"
+      },
+      "fields": [
+        {
+          "fieldName": "Field 1",
+          "defaultValue": "dssfdfsf",
+          "jsonFieldName": "field_1"
+        },
+        {
+          "fieldName": "Field 2",
+          "defaultValue": null,
+          "jsonFieldName": "field_2"
+        }
+      ]
+    }
+  ]
+}
