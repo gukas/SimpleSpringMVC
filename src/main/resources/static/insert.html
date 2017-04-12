@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>INSERT - Тестовое приложение для работы с REST</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <script
+            src="http://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        var formDataFromFile;
+
+        $(document).ready(function () {
+            $.ajax({
+                url: "js/form_data.json",
+                success: function (data) {
+                    formDataFromFile = data;
+                    var buttonsSpanHtml = "";
+                    $.each(formDataFromFile.forms, function (index, form) {
+                        buttonsSpanHtml += "<input type=\"button\" class=\"btn btn-default\" " +
+                            "onclick=\"loadForm('" + form.formName + "')\" value=\"" + form.formName + "\"/>";
+                    });
+                    $("#buttons").html(buttonsSpanHtml);
+                }
+            });
+        });
+
+        function getFormByName(formName) {
+            var foundForm = null;
+            $.each(formDataFromFile.forms, function (index, form) {
+                if (form.formName == formName) {
+                    foundForm = form;
+                }
+            });
+            if (foundForm == null) {
+                alert("No form with name " + formName + " found in json data file");
+            }
+            return foundForm;
+        }
+
+        function sendForm(url) {
+            var JSONData = { };
+            $.each($("#mainForm")[0], function (index, input) {
+                if(input.getAttribute("type") ==="text"){
+                    JSONData[input.getAttribute("id")] = input.getAttribute("value");
+                }
+            });
+            $.ajax({
+                url: url,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                type: "POST",
+                data: JSON.stringify(JSONData),
+                dataType: "json",
+                wait: true,
+                beforeSend: function (x) {
+                    if (x && x.overrideMimeType) {
+                        x.overrideMimeType("application/json;charset=UTF-8");
+                    }
+                },
+                success: function (result) {
+                    alert("Запрос на добавление в базу отправлен");
+                },
+                error: function (xhr, ajaxOptions, e) {
+                    alert("Возникла ошибка при запросе: Статус ответа: " + xhr.status
+                        + " Текст ошибки: " + xhr.responseText);
+                }
+            });
+        }
+
+        function loadForm(formName) {
+            var form = getFormByName(formName);
+            var formHtml = "";
+            formHtml += "<p class='lead'>" + formName + "</p>";
+            $("#mainForm").html(formHtml);
+            $.each(form.fields, function (index, field) {
+                formHtml += "<div class=\"form-group\">\n" +
+                    "<label for=\"_" + field.jsonFieldName + " \">" + field.fieldName + " </label>\n" +
+                    "<div id=\"_" + field.jsonFieldName + "\" class=\"input-group col-lg-3\">\n" +
+                    "<input type=\"text\" class=\"form-control\" size=\"12\" id=\"" + field.jsonFieldName + "\"";
+                if (field.defaultValue) {
+                    formHtml += " value=\"" + field.defaultValue + "\"";
+                }
+                formHtml += ">\n" +
+                    "</div>\n" +
+                    "</div>\n";
+            });
+            formHtml += "<input type=\"button\" class=\"btn btn-success\" " +
+                "onclick=\"sendForm('" + form.button.postUrl + "')\" value=\"" + form.button.buttonText + "\"/>";
+
+            $("#mainForm").html(formHtml);
+        }
+
+
+    </script>
+</head>
+<body>
+<div id="menu">
+    <nav class="navbar navbar-default navbar-static-top" id="common-navigation" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand title-navbar" href="index.html">
+                <div class="container" style="width:150px">
+                    <div class="row">
+                        <div class="col-xs">
+                            REST TEST
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-collapse">
+
+            <ul class="nav navbar-nav">
+                <li class="disabled"><a href="insert.html">Insert</a></li>
+                <li><a href="select.html">Select</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="well">
+        На этой странице находится форма для добавления записи в базу.<br/>
+        <span id="buttons"></span>
+    </div>
+
+    <form id="mainForm" class="form-horizontal col-md-offset-1">
+    </form>
+</div>
+</body>
+</html>
